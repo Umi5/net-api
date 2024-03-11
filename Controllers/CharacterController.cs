@@ -29,5 +29,12 @@ namespace Controllers
         {
             return Ok(personajes);
         }
+
+        [HttpPost]
+        public ActionResult<IEnumerable<Character>> AddCharacter (Character newCharacter)
+        {
+            personajes.Add(newCharacter);
+            return Ok(personajes);
+        }
     }
 }
