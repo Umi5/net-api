@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Services.CharacterServices;
+
+
 
 namespace Controllers
 {
@@ -11,30 +14,31 @@ namespace Controllers
     [Route("api/[controller]")]
     public class CharacterController : ControllerBase
     {
-        private static IList<Character> personajes = new List<Character> {
-            new Character {Name = "Manu", Id = 1},
-            new Character {Name = "Luis", Id = 2},
-            new Character {Name = "Xexu", Id = 3}
-        };
+        
+        private readonly ICharacterService _characterService;
+
+        public CharacterController(ICharacterService characterService)
+        {
+            this._characterService = characterService;
+        }
 
         [HttpGet]
         [Route("{id}")]
         public ActionResult<Character> GetCharacter(int id)
         {
-            return Ok(personajes.FirstOrDefault(c => c.Id == id));
+            return Ok(_characterService.GetCharacter(id));
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<Character>> GetCharacters()
+        [HttpGet("GetAll")]
+        public ActionResult<IEnumerable<Character>> GetAllCharacters()
         {
-            return Ok(personajes);
+            return Ok(_characterService.GetAllCharacters());
         }
 
         [HttpPost]
         public ActionResult<IEnumerable<Character>> AddCharacter (Character newCharacter)
         {
-            personajes.Add(newCharacter);
-            return Ok(personajes);
+            return Ok(_characterService.AddCharacter(newCharacter));
         }
     }
 }

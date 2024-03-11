@@ -8,7 +8,7 @@ namespace Services.CharacterServices
 {
     public interface ICharacterService
     {
-        IEnumerable<Character> GetCharacters();
+        IEnumerable<Character> GetAllCharacters();
         Character GetCharacter(int id);
         IEnumerable<Character> AddCharacter (Character newCharacter);
 

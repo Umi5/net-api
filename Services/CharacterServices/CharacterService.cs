@@ -2,25 +2,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Models;
 
 namespace Services.CharacterServices
 {
     public class CharacterService : ICharacterService
     {
+        private static IList<Character> personajes = new List<Character> {
+            new Character {Name = "Manu", Id = 1},
+            new Character {Name = "Luis", Id = 2},
+            new Character {Name = "Xexu", Id = 3}
+        };
+        
+
         public IEnumerable<Character> AddCharacter(Character newCharacter)
         {
-            throw new NotImplementedException();
+            personajes.Add(newCharacter);
+            return personajes;
+        }
+
+        public IEnumerable<Character> GetAllCharacters()
+        {
+               return personajes; 
         }
 
         public Character GetCharacter(int id)
         {
-            throw new NotImplementedException();
-        }
+            var character = personajes.FirstOrDefault(c => c.Id == id);
 
-        public IEnumerable<Character> GetCharacters()
-        {
-            throw new NotImplementedException();
+            if (character is not null)
+                return character;
+            
+            throw new Exception("Character NOT found");
         }
     }
 }
