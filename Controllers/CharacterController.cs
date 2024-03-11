@@ -19,13 +19,13 @@ namespace Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<Character> GetPersonaje(int id)
+        public ActionResult<Character> GetCharacter(int id)
         {
             return Ok(personajes.FirstOrDefault(c => c.Id == id));
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Character>> GetPersonajes()
+        public ActionResult<IEnumerable<Character>> GetCharacters()
         {
             return Ok(personajes);
         }
