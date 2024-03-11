@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dtos.Character;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Services.CharacterServices;
@@ -24,21 +25,21 @@ namespace Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<Character> GetCharacter(int id)
+        public async Task<ActionResult<GetCharacterDto>> GetCharacter(int id)
         {
-            return Ok(_characterService.GetCharacter(id));
+            return Ok(await _characterService.GetCharacter(id));
         }
 
         [HttpGet("GetAll")]
-        public ActionResult<IEnumerable<Character>> GetAllCharacters()
+        public async Task<ActionResult<IEnumerable<GetCharacterDto>>> GetAllCharacters()
         {
-            return Ok(_characterService.GetAllCharacters());
+            return Ok(await _characterService.GetAllCharacters());
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<Character>> AddCharacter (Character newCharacter)
+        public async Task<ActionResult<IEnumerable<GetCharacterDto>>> AddCharacter (AddCharacterDto newCharacter)
         {
-            return Ok(_characterService.AddCharacter(newCharacter));
+            return Ok(await _characterService.AddCharacter(newCharacter));
         }
     }
 }

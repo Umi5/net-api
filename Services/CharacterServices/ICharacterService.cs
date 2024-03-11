@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dtos.Character;
 using Models;
 
 namespace Services.CharacterServices
 {
     public interface ICharacterService
     {
-        IEnumerable<Character> GetAllCharacters();
-        Character GetCharacter(int id);
-        IEnumerable<Character> AddCharacter (Character newCharacter);
+        Task<IEnumerable<GetCharacterDto>> GetAllCharacters();
+        Task<GetCharacterDto> GetCharacter(int id);
+        Task<IEnumerable<GetCharacterDto>> AddCharacter (AddCharacterDto newCharacter);
 
     }
 }
