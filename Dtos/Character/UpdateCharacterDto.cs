@@ -8,7 +8,6 @@ namespace Dtos.Character
 {
     public class UpdateCharacterDto
     {
-         public int Id { get; set; }
         public string? Name { get; set; }
         public int Hitpoints { get; set; }
         public int Strenght { get; set; }

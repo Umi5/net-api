@@ -84,7 +84,7 @@ namespace Services.CharacterServices
                 var character = await _context.Characters.FirstAsync(c => c.Name == updatedCharacter.Name);
                 if(character is null)
                 {
-                    throw new Exception($"Character with ID '{updatedCharacter.Id}' not found");
+                    throw new Exception($"Character with ID '{updatedCharacter.Name}' not found");
                 }
                 
                 character.Name = updatedCharacter.Name;
