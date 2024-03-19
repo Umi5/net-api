@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
+using Data;
 using Dtos.Character;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Models;
@@ -19,19 +20,39 @@ namespace Services.CharacterServices
             new Character {Name = "Xexu", Id = 3}
         };
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public CharacterService(IMapper mapper)
+        public CharacterService(IMapper mapper, DataContext context)
         {
             this._mapper = mapper;
+            this._context = context;
+        }
+
+        public async Task<IEnumerable<GetCharacterDto>> GetAllCharacters()
+        {
+            var dbCharacters = await _context.Characters.ToListAsync();
+            return _mapper.Map<IEnumerable<GetCharacterDto>>(dbCharacters); 
+        }
+
+         public async Task<GetCharacterDto> GetCharacter(int id)
+        {
+            var character = await _context.Characters.Where(c => c.Id == id).SingleOrDefaultAsync();
+            
+            if (character is not null)
+                return _mapper.Map<GetCharacterDto>(character);
+            
+            throw new Exception("Character NOT found");
         }
 
         public async Task<IEnumerable<GetCharacterDto>> AddCharacter(AddCharacterDto newCharacter)
         {
             var character = _mapper.Map<Character>(newCharacter);
-            character.Id = personajes.Max(c => c.Id) + 1;
-            personajes.Add(character);
-            var charactersList = _mapper.Map<IEnumerable<GetCharacterDto>>(personajes);
-            return charactersList;
+            character.Id = 3;
+            await _context.Characters.AddAsync(_mapper.Map<Character>(newCharacter));
+            await _context.SaveChangesAsync();
+            var characterList = await _context.Characters.ToListAsync();
+            var charactersResponse = _mapper.Map<IEnumerable<GetCharacterDto>>(characterList);
+            return charactersResponse;
         }
 
         public async Task<ServiceResponse<IEnumerable<GetCharacterDto>>> DeleteCharacter(int id)
@@ -39,7 +60,8 @@ namespace Services.CharacterServices
             var serviceResponse = new ServiceResponse<IEnumerable<GetCharacterDto>>();
             try
             {
-                var character = personajes.FirstOrDefault(c => c.Id == id);
+                var character = await _context.Characters.Where(c => c.Id == id).SingleOrDefaultAsync();
+                
                 if(character is null)
                 {
                     throw new Exception($"Character with ID '{id}' not found");
@@ -55,22 +77,6 @@ namespace Services.CharacterServices
             }
 
             return serviceResponse;
-        }
-
-        public async Task<IEnumerable<GetCharacterDto>> GetAllCharacters()
-        {
-            
-            return _mapper.Map<IEnumerable<GetCharacterDto>>(personajes); 
-        }
-
-        public async Task<GetCharacterDto> GetCharacter(int id)
-        {
-            var character = personajes.FirstOrDefault(c => c.Id == id);
-
-            if (character is not null)
-                return _mapper.Map<GetCharacterDto>(character);
-            
-            throw new Exception("Character NOT found");
         }
 
         public async Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
