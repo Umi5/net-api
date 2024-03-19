@@ -26,9 +26,9 @@ namespace Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<GetCharacterDto>> GetCharacter(int id)
+        public async Task<ActionResult<GetCharacterDto>> GetCharacter(string name)
         {
-            return Ok(await _characterService.GetCharacter(id));
+            return Ok(await _characterService.GetCharacter(name));
         }
 
         [HttpGet("GetAll")]
@@ -55,9 +55,9 @@ namespace Controllers
         
         [HttpDelete]
         [Route("{id}")]
-        public async Task<ActionResult<ServiceResponse<IEnumerable<GetCharacterDto>>>> DeleteCharacter(int id)
+        public async Task<ActionResult<ServiceResponse<IEnumerable<GetCharacterDto>>>> DeleteCharacter(string name)
         {
-            var response = await _characterService.DeleteCharacter(id);
+            var response = await _characterService.DeleteCharacter(name);
             if(response.Data is null){
                 return NotFound(response);
             }

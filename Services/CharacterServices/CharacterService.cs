@@ -14,11 +14,6 @@ namespace Services.CharacterServices
 {
     public class CharacterService : ICharacterService
     {
-        private static IList<Character> personajes = new List<Character> {
-            new Character {Name = "Manu", Id = 1},
-            new Character {Name = "Luis", Id = 2},
-            new Character {Name = "Xexu", Id = 3}
-        };
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
@@ -34,9 +29,9 @@ namespace Services.CharacterServices
             return _mapper.Map<IEnumerable<GetCharacterDto>>(dbCharacters); 
         }
 
-         public async Task<GetCharacterDto> GetCharacter(int id)
+         public async Task<GetCharacterDto> GetCharacter(string name)
         {
-            var character = await _context.Characters.Where(c => c.Id == id).SingleOrDefaultAsync();
+            var character = await _context.Characters.Where(c => c.Name == name).SingleOrDefaultAsync();
             
             if (character is not null)
                 return _mapper.Map<GetCharacterDto>(character);
@@ -47,28 +42,29 @@ namespace Services.CharacterServices
         public async Task<IEnumerable<GetCharacterDto>> AddCharacter(AddCharacterDto newCharacter)
         {
             var character = _mapper.Map<Character>(newCharacter);
-            character.Id = 3;
+            character.Id = Guid.NewGuid();
             await _context.Characters.AddAsync(_mapper.Map<Character>(newCharacter));
             await _context.SaveChangesAsync();
+
             var characterList = await _context.Characters.ToListAsync();
-            var charactersResponse = _mapper.Map<IEnumerable<GetCharacterDto>>(characterList);
+            var charactersResponse = characterList.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
             return charactersResponse;
         }
 
-        public async Task<ServiceResponse<IEnumerable<GetCharacterDto>>> DeleteCharacter(int id)
+        public async Task<ServiceResponse<IEnumerable<GetCharacterDto>>> DeleteCharacter(string name)
         {
             var serviceResponse = new ServiceResponse<IEnumerable<GetCharacterDto>>();
             try
             {
-                var character = await _context.Characters.Where(c => c.Id == id).SingleOrDefaultAsync();
+                var character = await _context.Characters.Where(c => c.Name == name).SingleOrDefaultAsync();
                 
                 if(character is null)
                 {
-                    throw new Exception($"Character with ID '{id}' not found");
+                    throw new Exception($"Character with NAME '{name}' not found");
                 }
-                personajes.Remove(character);
-
-                serviceResponse.Data = personajes.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+                _context.Characters.Remove(character);
+                _context.SaveChanges();
+                serviceResponse.Data = _mapper.Map<IEnumerable<GetCharacterDto>>(await _context.Characters.ToListAsync());
 
             }catch(Exception ex)
             {
@@ -82,9 +78,10 @@ namespace Services.CharacterServices
         public async Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
         {
             var serviceResponse = new ServiceResponse<GetCharacterDto>();
+
             try
             {
-                var character = personajes.FirstOrDefault(c => c.Id == updatedCharacter.Id);
+                var character = await _context.Characters.FirstAsync(c => c.Name == updatedCharacter.Name);
                 if(character is null)
                 {
                     throw new Exception($"Character with ID '{updatedCharacter.Id}' not found");
@@ -96,6 +93,7 @@ namespace Services.CharacterServices
                 character.Defense = updatedCharacter.Defense;
                 character.Intelligence = updatedCharacter.Intelligence;
                 character.Class = updatedCharacter.Class;
+                _context.SaveChanges();
 
                 serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
 

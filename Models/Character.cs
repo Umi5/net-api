@@ -7,7 +7,7 @@ namespace Models
 {
     public class Character
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string? Name { get; set; }
         public int Hitpoints { get; set; }
         public int Strenght { get; set; }
