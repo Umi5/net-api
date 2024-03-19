@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dtos.Character;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.ServiceResponses;
 using Services.CharacterServices;
 
 
@@ -37,9 +38,31 @@ namespace Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<IEnumerable<GetCharacterDto>>> AddCharacter (AddCharacterDto newCharacter)
+        public async Task<ActionResult<IEnumerable<GetCharacterDto>>> AddCharacter (AddCharacterDto addCharacter)
         {
-            return Ok(await _characterService.AddCharacter(newCharacter));
+            return Ok(await _characterService.AddCharacter(addCharacter));
         }
+
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> UpdateCharacter (UpdateCharacterDto updatedCharacter)
+        {
+            var responseCharacter = await _characterService.UpdateCharacter(updatedCharacter);
+            if(responseCharacter.Data is null){
+                return NotFound(responseCharacter);
+            }
+            return Ok(responseCharacter);
+        }
+        
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<ActionResult<ServiceResponse<IEnumerable<GetCharacterDto>>>> DeleteCharacter(int id)
+        {
+            var response = await _characterService.DeleteCharacter(id);
+            if(response.Data is null){
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
     }
 }
