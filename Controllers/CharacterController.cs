@@ -25,10 +25,14 @@ namespace Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public async Task<ActionResult<GetCharacterDto>> GetCharacter(string name)
+        [Route("{name}")]
+        public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> GetCharacter(string name)
         {
-            return Ok(await _characterService.GetCharacter(name));
+            var response = await _characterService.GetCharacter(name);
+            if(response is null){
+                return NotFound(response);
+            }
+            return Ok(response);
         }
 
         [HttpGet("GetAll")]
@@ -38,9 +42,13 @@ namespace Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<IEnumerable<GetCharacterDto>>> AddCharacter (AddCharacterDto addCharacter)
+        public async Task<ActionResult<ServiceResponse<IEnumerable<GetCharacterDto>>>> AddCharacter (AddCharacterDto addCharacter)
         {
-            return Ok(await _characterService.AddCharacter(addCharacter));
+            var response = await _characterService.AddCharacter(addCharacter);
+            if(!response.Success){
+                return Ok(response);
+            }
+            return Ok(response);
         }
 
         [HttpPut]
@@ -54,7 +62,7 @@ namespace Controllers
         }
         
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{name}")]
         public async Task<ActionResult<ServiceResponse<IEnumerable<GetCharacterDto>>>> DeleteCharacter(string name)
         {
             var response = await _characterService.DeleteCharacter(name);

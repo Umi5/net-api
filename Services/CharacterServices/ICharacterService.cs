@@ -11,9 +11,9 @@ namespace Services.CharacterServices
     public interface ICharacterService
     {
         Task<IEnumerable<GetCharacterDto>> GetAllCharacters();
-        Task<GetCharacterDto> GetCharacter(string name);
+        Task<ServiceResponse<GetCharacterDto>> GetCharacter(string name);
         Task<ServiceResponse<IEnumerable<GetCharacterDto>>> DeleteCharacter(string name);
-        Task<IEnumerable<GetCharacterDto>> AddCharacter (AddCharacterDto newCharacter);
+        Task<ServiceResponse<IEnumerable<GetCharacterDto>>> AddCharacter (AddCharacterDto newCharacter);
         Task<ServiceResponse<GetCharacterDto>> UpdateCharacter (UpdateCharacterDto updatedCharacter);
         
     }

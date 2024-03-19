@@ -29,26 +29,54 @@ namespace Services.CharacterServices
             return _mapper.Map<IEnumerable<GetCharacterDto>>(dbCharacters); 
         }
 
-         public async Task<GetCharacterDto> GetCharacter(string name)
+        public async Task<ServiceResponse<GetCharacterDto>> GetCharacter(string name)
         {
-            var character = await _context.Characters.Where(c => c.Name == name).SingleOrDefaultAsync();
+            var serviceResponse = new ServiceResponse<GetCharacterDto>();
+
+            try{
+                var character = await _context.Characters.FirstOrDefaultAsync(c => c.Name == name);
             
-            if (character is not null)
-                return _mapper.Map<GetCharacterDto>(character);
-            
-            throw new Exception("Character NOT found");
+            if (character is null){
+                throw new Exception($"Character with name '{name}' not found");
+            }
+                serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+                serviceResponse.Success = true;
+                serviceResponse.Message = $"Character {name} found";
+
+            }catch(Exception ex){
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
         }
 
-        public async Task<IEnumerable<GetCharacterDto>> AddCharacter(AddCharacterDto newCharacter)
+        public async Task<ServiceResponse<IEnumerable<GetCharacterDto>>> AddCharacter(AddCharacterDto newCharacter)
         {
-            var character = _mapper.Map<Character>(newCharacter);
-            character.Id = Guid.NewGuid();
-            await _context.Characters.AddAsync(_mapper.Map<Character>(newCharacter));
-            await _context.SaveChangesAsync();
+            var serviceResponse = new ServiceResponse<IEnumerable<GetCharacterDto>>();
 
-            var characterList = await _context.Characters.ToListAsync();
-            var charactersResponse = characterList.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
-            return charactersResponse;
+            try{
+                var checkCharacter = await _context.Characters.FirstOrDefaultAsync(c => c.Name == newCharacter.Name);
+                if(checkCharacter is not null){
+                    throw new Exception($"Character with name '{newCharacter.Name}' already created");
+                }
+
+                await _context.Characters.AddAsync(_mapper.Map<Character>(newCharacter));
+                await _context.SaveChangesAsync();
+
+                var characterList = await _context.Characters.ToListAsync();
+                serviceResponse.Data = characterList.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+
+                serviceResponse.Message = $"Character with name '{newCharacter.Name}' created";
+                serviceResponse.Success = true;
+            }catch(Exception ex){
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            
+            
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<IEnumerable<GetCharacterDto>>> DeleteCharacter(string name)
@@ -64,7 +92,8 @@ namespace Services.CharacterServices
                 }
                 _context.Characters.Remove(character);
                 _context.SaveChanges();
-                serviceResponse.Data = _mapper.Map<IEnumerable<GetCharacterDto>>(await _context.Characters.ToListAsync());
+                var characterList = await _context.Characters.ToListAsync();
+                serviceResponse.Data = characterList.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
 
             }catch(Exception ex)
             {
