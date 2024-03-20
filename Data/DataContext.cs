@@ -13,6 +13,7 @@ namespace Data
             
         }
         
-        public DbSet<Character> Characters => Set<Character>();
+        public DbSet<Character> Characters { get; set; }
+        public DbSet<Backpack> Backpacks { get; set; }
     }
 }

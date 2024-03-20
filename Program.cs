@@ -1,5 +1,6 @@
 global using Microsoft.EntityFrameworkCore;
 using Data;
+using Services.BackpackServices;
 using Services.CharacterServices;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 //SERVICIOS
+builder.Services.AddScoped<IBackpackService, BackpackService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 
 var app = builder.Build();
