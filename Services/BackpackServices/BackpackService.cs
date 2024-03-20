@@ -7,6 +7,7 @@ using Data;
 using Dtos.Backpack;
 using Models;
 using Models.ServiceResponses;
+using Services.CharacterServices;
 
 namespace Services.BackpackServices
 {
@@ -25,6 +26,7 @@ namespace Services.BackpackServices
         {
             var serviceResponse = new ServiceResponse<BackpackDto>();
             try{
+
                 var character = await _context.Characters.FirstOrDefaultAsync(c => c.Name == name);
                 if (character is null){
                     throw new Exception($"Character with name '{name}' not found");
