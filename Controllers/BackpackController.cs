@@ -22,7 +22,7 @@ namespace Controllers
 
         [HttpGet]
         [Route("{name}")]
-        public async Task<ActionResult<ServiceResponse<BackpackDto>>> GetCharacter(string name)
+        public async Task<ActionResult<ServiceResponse<BackpackDto>>> GetBackpackByCharacterName(string name)
         {
             var response = await _backpackService.GetBackpackByCharacterName(name);
             if(response is null){
@@ -30,5 +30,18 @@ namespace Controllers
             }
             return Ok(response);
         }
+
+        [HttpPost]
+        [Route("{name}")]
+        public async Task<ActionResult<ServiceResponse<BackpackDto>>> CreateBackpackByUsername(string name)
+        {
+            var response = await _backpackService.CreateBackpackByUsername(name);
+            if(response is null){
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        
     }
 }

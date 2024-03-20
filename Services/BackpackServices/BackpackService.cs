@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Data;
 using Dtos.Backpack;
+using Models;
 using Models.ServiceResponses;
 
 namespace Services.BackpackServices
@@ -20,9 +21,41 @@ namespace Services.BackpackServices
             this._context = context;
         }
 
-        public Task<ServiceResponse<BackpackDto>> CreateBackpackByUsername(string name)
+        public async Task<ServiceResponse<BackpackDto>> CreateBackpackByUsername(string name)
         {
-            throw new NotImplementedException();
+            var serviceResponse = new ServiceResponse<BackpackDto>();
+            try{
+                var character = await _context.Characters.FirstOrDefaultAsync(c => c.Name == name);
+                if (character is null){
+                    throw new Exception($"Character with name '{name}' not found");
+                }
+
+                var backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == character.Id);
+                if (backpack is not null){
+                    throw new Exception($"Character with name '{name}' already has a backpack");
+                }
+                
+                await _context.Backpacks.AddAsync(new Backpack{
+                    Id = Guid.NewGuid(),
+                    Name = $"Mochila de {name}",
+                    CharacterId = character.Id
+                });
+                _context.SaveChanges();
+
+                serviceResponse.Data = new BackpackDto {
+                    CharacterName = character.Name,
+                    Name = $"Mochila de {name}"
+                };
+
+                serviceResponse.Success = true;
+                serviceResponse.Message = $"Backpack for {name} created";
+
+            }catch(Exception ex){
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<BackpackDto>> GetBackpackByCharacterName(string name)
@@ -43,6 +76,7 @@ namespace Services.BackpackServices
                     CharacterName = character.Name,
                     Name = backpack.Name
                 };
+                serviceResponse.Message = "Success";
                 serviceResponse.Success = true;
 
             }catch(Exception ex){
