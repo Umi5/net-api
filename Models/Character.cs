@@ -15,6 +15,7 @@ namespace Models
         public int Intelligence { get; set; }
         public RpgClass Class { get; set; }
         public Backpack? Backpack { get; set; }
+        public List<Weapon>? Weapons { get; set; }
     }
 
 }
