@@ -7,6 +7,6 @@ namespace Dtos.Backpack
 {
     public class BackpackDto
     {
-        public string? Name { get; set; }
+        public string? BackpackName { get; set; }
     }
 }

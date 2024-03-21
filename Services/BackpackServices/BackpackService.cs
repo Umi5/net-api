@@ -45,7 +45,7 @@ namespace Services.BackpackServices
                 _context.SaveChanges();
 
                 serviceResponse.Data = new BackpackDto {
-                    Name = $"Mochila de {name}"
+                    BackpackName = $"Mochila de {name}"
                 };
 
                 serviceResponse.Success = true;

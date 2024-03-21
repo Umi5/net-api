@@ -2,6 +2,7 @@ global using Microsoft.EntityFrameworkCore;
 using Data;
 using Services.BackpackServices;
 using Services.CharacterServices;
+using Services.WeaponService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //SERVICIOS
 builder.Services.AddScoped<IBackpackService, BackpackService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<IWeaponService, WeaponService>();
 
 var app = builder.Build();
 
