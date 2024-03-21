@@ -17,6 +17,6 @@ namespace Dtos.Character
         public int Intelligence { get; set; }
         public RpgClass Class { get; set; }
         public BackpackDto? Backpack { get; set; }
-        public List<WeaponDto>? Weapon { get; set; }
+        public List<WeaponDto>? Weapons { get; set; }
     }
 }

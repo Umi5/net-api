@@ -40,8 +40,8 @@ namespace Services.WeaponService
                 await _context.SaveChangesAsync();
                 
                 serviceResponse.Data = new WeaponDto {
-                    WeaponName = weaponName,
-                    weaponDamage = weaponDamage 
+                    Name = weaponName,
+                    Damage = weaponDamage 
                 };
                 serviceResponse.Success = true;
                 serviceResponse.Message = $"Arma añadida al personaje {characterName}";

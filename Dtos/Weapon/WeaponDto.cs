@@ -7,7 +7,7 @@ namespace Dtos
 {
     public class WeaponDto
     {
-        public string? WeaponName { get; set; }
-        public int weaponDamage { get; set; }
+        public string? Name { get; set; }
+        public int Damage { get; set; }
     }
 }

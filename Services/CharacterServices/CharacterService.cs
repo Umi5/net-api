@@ -27,10 +27,8 @@ namespace Services.CharacterServices
         {
             var dbCharacters = await _context.Characters.ToListAsync();
             foreach(Character c in dbCharacters){
-                var backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == c.Id);
-                if(backpack is not null){
-                    c.Backpack = backpack;
-                }
+                c.Backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == c.Id);
+                c.Weapons = await _context.Weapons.Where(w => w.CharacterId == c.Id).ToListAsync();
             }
             return _mapper.Map<IEnumerable<GetCharacterDto>>(dbCharacters); 
         }
@@ -45,10 +43,10 @@ namespace Services.CharacterServices
                 if (character is null){
                     throw new Exception($"Character with name '{name}' not found");
                 }
-                var backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == character.Id);
-                if(backpack is not null){
-                    character.Backpack = backpack;
-                }
+
+                character.Backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == character.Id);
+                character.Weapons = await _context.Weapons.Where(w => w.CharacterId == character.Id).ToListAsync();
+
                 serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
                 serviceResponse.Success = true;
                 serviceResponse.Message = $"Character {name} found";
