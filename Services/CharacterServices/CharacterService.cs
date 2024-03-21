@@ -23,14 +23,18 @@ namespace Services.CharacterServices
             this._context = context;
         }
 
-        public async Task<IEnumerable<GetCharacterDto>> GetAllCharacters()
+        public async Task<ServiceResponse<IEnumerable<GetCharacterDto>>> GetAllCharacters()
         {
+            var serviceResponse = new ServiceResponse<IEnumerable<GetCharacterDto>>();
             var dbCharacters = await _context.Characters.ToListAsync();
             foreach(Character c in dbCharacters){
                 c.Backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == c.Id);
                 c.Weapons = await _context.Weapons.Where(w => w.CharacterId == c.Id).ToListAsync();
             }
-            return _mapper.Map<IEnumerable<GetCharacterDto>>(dbCharacters); 
+            serviceResponse.Data =_mapper.Map<IEnumerable<GetCharacterDto>>(dbCharacters); 
+            serviceResponse.Success = true;
+            serviceResponse.Message = "All results for characters";
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetCharacterDto>> GetCharacter(string name)

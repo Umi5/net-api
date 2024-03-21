@@ -36,7 +36,7 @@ namespace Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<IEnumerable<GetCharacterDto>>> GetAllCharacters()
+        public async Task<ActionResult<ServiceResponse<IEnumerable<GetCharacterDto>>>> GetAllCharacters()
         {
             return Ok(await _characterService.GetAllCharacters());
         }
