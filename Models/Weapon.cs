@@ -9,6 +9,7 @@ namespace Models
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
+        public int Damage { get; set; }
         public Character? Character { get; set; }
         public Guid CharacterId { get; set; }
     }
