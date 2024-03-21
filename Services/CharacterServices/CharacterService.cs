@@ -26,6 +26,12 @@ namespace Services.CharacterServices
         public async Task<IEnumerable<GetCharacterDto>> GetAllCharacters()
         {
             var dbCharacters = await _context.Characters.ToListAsync();
+            foreach(Character c in dbCharacters){
+                var backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == c.Id);
+                if(backpack is not null){
+                    c.Backpack = backpack;
+                }
+            }
             return _mapper.Map<IEnumerable<GetCharacterDto>>(dbCharacters); 
         }
 
@@ -36,9 +42,13 @@ namespace Services.CharacterServices
             try{
                 var character = await _context.Characters.FirstOrDefaultAsync(c => c.Name == name);
             
-            if (character is null){
-                throw new Exception($"Character with name '{name}' not found");
-            }
+                if (character is null){
+                    throw new Exception($"Character with name '{name}' not found");
+                }
+                var backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == character.Id);
+                if(backpack is not null){
+                    character.Backpack = backpack;
+                }
                 serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
                 serviceResponse.Success = true;
                 serviceResponse.Message = $"Character {name} found";

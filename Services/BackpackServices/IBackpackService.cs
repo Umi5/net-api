@@ -9,7 +9,6 @@ namespace Services.BackpackServices
 {
     public interface IBackpackService
     {
-        Task<ServiceResponse<BackpackDto>> GetBackpackByCharacterName(string name);
         Task<ServiceResponse<BackpackDto>> CreateBackpackByUsername(string name);
     }
 }

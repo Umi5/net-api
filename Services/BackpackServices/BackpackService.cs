@@ -45,41 +45,11 @@ namespace Services.BackpackServices
                 _context.SaveChanges();
 
                 serviceResponse.Data = new BackpackDto {
-                    CharacterName = character.Name,
                     Name = $"Mochila de {name}"
                 };
 
                 serviceResponse.Success = true;
                 serviceResponse.Message = $"Backpack for {name} created";
-
-            }catch(Exception ex){
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
-            }
-
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<BackpackDto>> GetBackpackByCharacterName(string name)
-        {
-            var serviceResponse = new ServiceResponse<BackpackDto>();
-            try{
-                var character = await _context.Characters.FirstOrDefaultAsync(c => c.Name == name);
-                if (character is null){
-                    throw new Exception($"Character with name '{name}' not found");
-                }
-
-                var backpack = await _context.Backpacks.FirstOrDefaultAsync(b => b.CharacterId == character.Id);
-                if (backpack is null){
-                    throw new Exception($"Character with name '{name}' does NOT have a backpack");
-                }
-                
-                serviceResponse.Data = new BackpackDto {
-                    CharacterName = character.Name,
-                    Name = backpack.Name
-                };
-                serviceResponse.Message = "Success";
-                serviceResponse.Success = true;
 
             }catch(Exception ex){
                 serviceResponse.Success = false;
