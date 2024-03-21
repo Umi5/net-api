@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dtos.Backpack;
 using Models;
 
 namespace Dtos.Character
@@ -15,5 +16,7 @@ namespace Dtos.Character
         public int Defense { get; set; }
         public int Intelligence { get; set; }
         public RpgClass Class { get; set; }
+        public BackpackDto? Backpack { get; set; }
+        public List<WeaponDto>? Weapon { get; set; }
     }
 }
